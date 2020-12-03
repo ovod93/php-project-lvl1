@@ -1,0 +1,14 @@
+{
+    "name": "alex/hexlet-slim-example",
+    "authors": [
+        {
+            "name": "ovod93",
+            "email": "alexander.shein1993@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^4.7",
+        "slim/psr7": "^1.3",
+        "slim/http": "^1.2"
+    }
+}
