@@ -1,0 +1,12 @@
+<form action="/users" method="post">
+    <label>Имя</label>
+            <input type="text" name="user[name]"
+                   placeholder="Type your name"
+                   value="<?= htmlspecialchars($user['name']) ?>">
+    <label>e-mail</label>
+            <input type="email" name="user[email]"
+                   placeholder="Type your email"
+                   value="<?= htmlspecialchars($user['email']) ?>">
+    <button>Sign in</button>
+</form>
+
