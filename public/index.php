@@ -12,6 +12,12 @@ $container->set('renderer', function () {
 $app = AppFactory::createFromContainer($container);
 $app->addErrorMiddleware(true, true, true);
 
+$filePath = 'public/dataBase.csv';
+
+#редирект с корня автоматом на вторизацию
+$app->get('/', function ($request, $response) {
+    return $response->withRedirect('/users/autorization');
+});
 
 $app->get('/users/autorization', function ($request, $response) {
     $params = [
@@ -24,8 +30,8 @@ $app->get('/users/autorization', function ($request, $response) {
 $app->post('/users', function ($request, $response) {
         $user = $request->getParsedBodyParam('user');
         $errors = validate($user);
-        if(cheсker($user) !== false) {
-            return $response->withRedirect('/users', 302);
+        if(check() === true) {
+            return $response->withRedirect('/users');
         }
         $params = [
             'user' => $user,
@@ -34,35 +40,43 @@ $app->post('/users', function ($request, $response) {
         return $this->get('renderer')->render($response, "users/autorization.phtml", $params);
     });
 
-    function validate($user) {
-        $errors = [];
-        if(empty($user['name'])) {
-            $errors[] = 'Вы не ввели имя';
-        }
-        if(empty($user['email'])) {
-            $errors[] = 'Вы не ввели email';
-        }
-        return $errors;
+$app->run();
+
+function validate($user) {
+    $errors = [];
+    if(empty($user['name'])) {
+        $errors[] = 'Вы не ввели имя';
+    }
+    if(empty($user['email'])) {
+        $errors[] = 'Вы не ввели email';
+    }
+    return $errors;
 }
 
-    function cheсker($user) {
-        $rows = array_map('str_getcsv', file('public/dataBase.csv'));
-        $header = array_shift($rows);
-        $csv = [];
-        foreach($rows as $row) {
-            $csv[] = array_combine($header, $row);
-        }
+function parser($filePath)
+{
+    $rows = array_map('str_getcsv', $filePath);
+    $header = array_shift($rows);
+    $csv = [];
+    foreach ($rows as $row) {
+        $csv[] = array_combine($header, $row);
+    }
+    return $csv;
+}
 
-        foreach ($csv as $client) {
-            if($user['name'] !== $client['name'] || $user['email'] !== $client['email']) {
-                return false;
-                continue;
-            }
-            if ($user['name'] === $client['name'] && $user['email'] === $client['email']) {
-                return true;
-            }
+function check($csv, $user) {
+    foreach ($csv as $client) {
+        if ($user['name'] === $client['name'] && $user['email'] === $client['email']) {
+            return true;
+        } else {
+            return false;
         }
     }
+}
 
-$app->run();
+
+
+
+
+
 
