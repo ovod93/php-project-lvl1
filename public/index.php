@@ -12,7 +12,7 @@ $container->set('renderer', function () {
 $app = AppFactory::createFromContainer($container);
 $app->addErrorMiddleware(true, true, true);
 
-$filePath = 'public/dataBase.csv';
+
 
 #редирект с корня автоматом на вторизацию
 $app->get('/', function ($request, $response) {
@@ -28,18 +28,22 @@ $app->get('/users/autorization', function ($request, $response) {
 });
 
 $app->post('/users', function ($request, $response) {
-        $user = $request->getParsedBodyParam('user');
-        $errors = validate($user);
-        if(check() === true) {
-            return $response->withRedirect('/users');
-        }
-        $params = [
-            'user' => $user,
-            'errors' => $errors,
-        ];
+    $user = $request->getParsedBodyParam('user');
+    $filePath = file('public/dataBase.csv');
+    $errors = validate($user);
+    $csv = parser($filePath);
+    $check = check($csv, $user);
+    print_r($check);
+
+    if(check($csv, $user) === 1) {
+        return $response->withRedirect('/users');
+    }
+    $params = [
+        'user' => $user,
+        'errors' => $errors,
+    ];
         return $this->get('renderer')->render($response, "users/autorization.phtml", $params);
     });
-
 $app->run();
 
 function validate($user) {
@@ -65,13 +69,16 @@ function parser($filePath)
 }
 
 function check($csv, $user) {
+    $result = '';
     foreach ($csv as $client) {
         if ($user['name'] === $client['name'] && $user['email'] === $client['email']) {
-            return true;
-        } else {
-            return false;
+            $result = 'jopa';
+        }
+        if ($user['name'] !== $client['name'] || $user['email'] !== $client['email']) {
+            $result = 'hui';
         }
     }
+    return $result;
 }
 
 
