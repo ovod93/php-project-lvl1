@@ -12,7 +12,7 @@ $container->set('renderer', function () {
 $app = AppFactory::createFromContainer($container);
 $app->addErrorMiddleware(true, true, true);
 
-
+$filePath = file('public/dataBase.csv');
 
 #редирект с корня автоматом на вторизацию
 $app->get('/', function ($request, $response) {
@@ -27,9 +27,8 @@ $app->get('/users/autorization', function ($request, $response) {
     return $this->get('renderer')->render($response, "users/autorization.phtml", $params);
 });
 
-$app->post('/users', function ($request, $response) {
+$app->post('/users', function ($request, $response) use ($filePath){
     $user = $request->getParsedBodyParam('user');
-    $filePath = file('public/dataBase.csv');
     $errors = validate($user);
     $csv = parser($filePath);
     $check = check($csv, $user);
@@ -72,10 +71,10 @@ function check($csv, $user) {
     $result = '';
     foreach ($csv as $client) {
         if ($user['name'] === $client['name'] && $user['email'] === $client['email']) {
-            $result = 'jopa';
+            $result = '1';
         }
         if ($user['name'] !== $client['name'] || $user['email'] !== $client['email']) {
-            $result = 'hui';
+            $result = '0';
         }
     }
     return $result;
