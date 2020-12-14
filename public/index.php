@@ -32,8 +32,6 @@ $app->post('/users', function ($request, $response) use ($filePath){
     $errors = validate($user);
     $csv = parser($filePath);
     $check = check($csv, $user);
-    print_r($check);
-
     if(check($csv, $user) === 1) {
         return $response->withRedirect('/users');
     }
@@ -68,6 +66,7 @@ function parser($filePath)
 }
 
 function check($csv, $user) {
+    print_r($user);
     $result = '';
     foreach ($csv as $client) {
         if ($user['name'] === $client['name'] && $user['email'] === $client['email']) {
