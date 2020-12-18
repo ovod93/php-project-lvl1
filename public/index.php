@@ -12,9 +12,7 @@ $container->set('renderer', function () {
 $app = AppFactory::createFromContainer($container);
 $app->addErrorMiddleware(true, true, true);
 
-$filePath = file('public/dataBase.csv');
 
-#редирект с корня автоматом на вторизацию
 $app->get('/', function ($request, $response) {
     return $response->withRedirect('/users/autorization');
 });
@@ -27,9 +25,12 @@ $app->get('/users/autorization', function ($request, $response) {
     return $this->get('renderer')->render($response, "users/autorization.phtml", $params);
 });
 
+$filePath = file('public/dataBase.csv');
+
 $app->post('/users', function ($request, $response) use ($filePath){
     $user = $request->getParsedBodyParam('user');
     $errors = validate($user);
+    print_r($errors);
     $csv = parser($filePath);
     $check = check($csv, $user);
     if(check($csv, $user) === 1) {
@@ -39,8 +40,9 @@ $app->post('/users', function ($request, $response) use ($filePath){
         'user' => $user,
         'errors' => $errors,
     ];
-        return $this->get('renderer')->render($response, "users/autorization.phtml", $params);
+        return $this->get('renderer')->render($response, "users/index.phtml", $params);
     });
+
 $app->run();
 
 function validate($user) {
@@ -66,7 +68,7 @@ function parser($filePath)
 }
 
 function check($csv, $user) {
-    print_r($user);
+//    print_r($user);
     $result = '';
     foreach ($csv as $client) {
         if ($user['name'] === $client['name'] && $user['email'] === $client['email']) {

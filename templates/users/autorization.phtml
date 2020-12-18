@@ -1,21 +1,23 @@
 <form action="/users" method="post">
-    <label>Имя
-        <input type="text" name="user[name]"
-               placeholder="Type your name"
-               value="<?= htmlspecialchars($user['name']) ?>">
-    </label>
-    <?php if (isset($errors['name'])): ?>
-        <div><?= $errors['name'] ?></div>
-    <?php endif ?>
+    <div>
+        <label>
+            Имя
+            <input type="text" name="user[name]" value="<?= htmlspecialchars($user['name']) ?>">
+        </label>
+        <?php if (isset($errors['name'])): ?>
+            <div><?= $errors['name'] ?></div>
+        <?php endif ?>
+    </div>
 
-    <label>e-mail
-        <input type="email" name="user[email]"
-               placeholder="Type your email"
-               value="<?= htmlspecialchars($user['email']) ?>">
-    </label>
-    <?php if (isset($errors['email'])): ?>
-        <div><?= $errors['email'] ?></div>
-    <?php endif ?>
+    <div>
+        <label>
+            Email
+            <input type="email" required name="user[email]" value="<?= htmlspecialchars($user['email']) ?>">
+        </label>
+        <?php if (isset($errors['email'])): ?>
+            <div><?= $errors['email'] ?></div>
+        <?php endif ?>
+    </div>
 
     <button>Sign in</button>
 </form>
